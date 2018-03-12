@@ -43,7 +43,7 @@
     as |option term|
 }}
   {{#if option.__isSuggestion__}}
-    {{option.text}}
+    {{component suggestedOptionComponent option=option term=term}}
   {{else}}
     {{yield option term}}
   {{/if}}
