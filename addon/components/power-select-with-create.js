@@ -44,17 +44,20 @@ export default Ember.Component.extend({
       }
 
       if (this.get('search')) {
-        return Ember.RSVP.resolve(this.get('search')(term)).then((results) =>  {
-          if (results.toArray) {
-            results = results.toArray();
-          }
+        let returnFn = this.get('search')(term);
+        if (returnFn && returnFn.then) {
+          return returnFn.then((results) =>  {
+            if (results.toArray) {
+              results = results.toArray();
+            }
 
-          if (this.shouldShowCreateOption(term)) {
-            results.unshift(this.buildSuggestionForTerm(term));
-          }
+            if (this.shouldShowCreateOption(term)) {
+              results.unshift(this.buildSuggestionForTerm(term));
+            }
 
-          return results;
-        });
+            return results;
+          });
+        }
       }
 
       newOptions = this.filter(Ember.A(newOptions), term);
