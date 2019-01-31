@@ -34,6 +34,16 @@ export default Ember.Component.extend({
     return this.get('showCreateWhen') ? this.get('showCreateWhen')(term) : true;
   },
 
+  addCreateOption(term, results) {
+    if (this.shouldShowCreateOption(term, results)) {
+      if (this.get('showCreatePosition') === 'bottom') {
+        results.push(this.buildSuggestionForTerm(term));
+      } else {
+        results.unshift(this.buildSuggestionForTerm(term));
+      }
+    }
+  },
+
   // Actions
   actions: {
     searchAndSuggest(term) {
@@ -50,20 +60,14 @@ export default Ember.Component.extend({
             if (results.toArray) {
               results = results.toArray();
             }
-
-            if (this.shouldShowCreateOption(term)) {
-              results.unshift(this.buildSuggestionForTerm(term));
-            }
-
+            this.addCreateOption(term, results);
             return results;
           });
         }
       }
 
       newOptions = this.filter(Ember.A(newOptions), term);
-      if (this.shouldShowCreateOption(term)) {
-        newOptions.unshift(this.buildSuggestionForTerm(term));
-      }
+      this.addCreateOption(term, newOptions);
 
       return newOptions;
     },
